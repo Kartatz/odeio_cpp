@@ -15,6 +15,14 @@ add_executable(
 	src/main.cpp
 )
 
+foreach(property BUILD_RPATH INSTALL_RPATH)
+	set_target_properties(
+		pdftxtremover
+		PROPERTIES
+		${property} "$ORIGIN/../lib:$ORIGIN"
+	)
+endforeach()
+
 target_compile_features(pdftxtremover PRIVATE cxx_std_17)
 
 set(USE_IMPLICIT_CRYPTO OFF)
@@ -22,6 +30,14 @@ set(ALLOW_CRYPTO_NATIVE ON)
 set(REQUIRE_CRYPTO_NATIVE ON)
 
 add_subdirectory(submodules/qpdf EXCLUDE_FROM_ALL)
+
+foreach(property BUILD_RPATH INSTALL_RPATH)
+	set_target_properties(
+		libqpdf
+		PROPERTIES
+		${property} "$ORIGIN"
+	)
+endforeach()
 
 target_link_libraries(
 	pdftxtremover
