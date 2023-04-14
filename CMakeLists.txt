@@ -15,14 +15,18 @@ add_executable(
 
 target_compile_features(pdftxtremover PRIVATE cxx_std_17)
 
+set(USE_IMPLICIT_CRYPTO OFF)
+set(ALLOW_CRYPTO_NATIVE ON)
+set(REQUIRE_CRYPTO_NATIVE ON)
+
 add_subdirectory(submodules/qpdf EXCLUDE_FROM_ALL)
 
 target_link_libraries(
 	pdftxtremover
-	qpdf
+	libqpdf
 )
 
-foreach(target pdftxtremover qpdf)
+foreach(target pdftxtremover libqpdf)
 	install(
 		TARGETS ${target}
 		RUNTIME DESTINATION bin
