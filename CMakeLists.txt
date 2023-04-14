@@ -13,6 +13,8 @@ add_executable(
 	src/main.cpp
 )
 
+target_compile_features(pdftxtremover PRIVATE cxx_std_17)
+
 add_subdirectory(submodules/qpdf EXCLUDE_FROM_ALL)
 
 target_link_libraries(
