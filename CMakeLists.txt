@@ -8,6 +8,8 @@ project(
 	LANGUAGES CXX
 )
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++")
+
 add_executable(
 	pdftxtremover
 	src/main.cpp
