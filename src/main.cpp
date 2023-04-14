@@ -47,7 +47,7 @@ static bool magic_matches(const std::string filename) {
 static void walk_directory(const std::string directory, const char* const pattern) {
 	
 	for (const std::filesystem::directory_entry entry : std::filesystem::directory_iterator(directory)) {
-		const std::string name = directory + std::string(PATH_SEPARATOR) + std::string(entry.path().filename());
+		const std::string name = directory + std::string(entry.path().filename());
 		
 		if (entry.is_regular_file()) {
 			std::cout << "+ Verificando o estado do arquivo presente em '" << name << "'" << std::endl;
