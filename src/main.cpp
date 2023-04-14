@@ -14,8 +14,8 @@
 	#define PATH_SEPARATOR "/"
 #endif
 
-static constexpr char BOM_MAGIC_NUMBERS[] = {0xEF, 0xBB, 0xBF};
-static constexpr char PDF_MAGIC_NUMBERS[] = {0x25, 0x50, 0x44, 0x46};
+static constexpr char BOM_MAGIC_NUMBERS[] = {(char) 0xEF, (char) 0xBB, (char) 0xBF};
+static constexpr char PDF_MAGIC_NUMBERS[] = {(char) 0x25, (char) 0x50, (char) 0x44, (char) 0x46};
 
 static bool magic_matches(const std::string filename) {
 	
