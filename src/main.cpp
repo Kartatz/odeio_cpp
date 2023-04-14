@@ -119,7 +119,7 @@ static void walk_directory(const std::string directory, const char* const patter
 				std::cerr << "- Nenhuma das páginas do documento PDF presente em '" << name << "' corresponderam com o texto inserido!" << std::endl; 
 			}
 		} else if (entry.is_directory()) {
-			walk_directory(name, pattern);
+			walk_directory(directory + PATH_SEPARATOR + name, pattern);
 		}
 		
 	}
