@@ -35,7 +35,6 @@ add_custom_command(
 	COMMAND ${CMAKE_COMMAND} --build ./ --target zlib
 	COMMENT "-- Building FFmpeg"
 )
-endif()
 
 add_custom_target(ensure_zlib ALL DEPENDS "a")
 
