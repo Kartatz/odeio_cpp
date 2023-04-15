@@ -29,7 +29,19 @@ set(USE_IMPLICIT_CRYPTO OFF)
 set(ALLOW_CRYPTO_NATIVE ON)
 set(REQUIRE_CRYPTO_NATIVE ON)
 
+
+add_custom_command(
+	OUTPUT "a"
+	COMMAND ${CMAKE_COMMAND} --build ./ --target zlib
+	COMMENT "-- Building FFmpeg"
+)
+endif()
+
+add_custom_target(ensure_zlib ALL DEPENDS "a")
+
 add_subdirectory(submodules/qpdf EXCLUDE_FROM_ALL)
+add_subdirectory(submodules/zlib EXCLUDE_FROM_ALL)
+add_subdirectory(submodules/turbo-jpeg EXCLUDE_FROM_ALL)
 
 foreach(property BUILD_RPATH INSTALL_RPATH)
 	set_target_properties(
@@ -37,6 +49,16 @@ foreach(property BUILD_RPATH INSTALL_RPATH)
 		PROPERTIES
 		${property} "$ORIGIN"
 	)
+endforeach()
+
+foreach(property RUNTIME_OUTPUT_DIRECTORY LIBRARY_OUTPUT_DIRECTORY)
+	foreach(target turbojpeg zlib)
+		set_target_properties(
+			${target}
+			PROPERTIES
+			${property} $<TARGET_FILE_DIR:sparklec>
+		)
+	endforeach()
 endforeach()
 
 target_link_libraries(

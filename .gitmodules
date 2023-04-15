@@ -1,3 +1,9 @@
 [submodule "submodules/qpdf"]
 	path = submodules/qpdf
 	url = https://github.com/qpdf/qpdf
+[submodule "submodules/jpeg-turbo"]
+	path = submodules/jpeg-turbo
+	url = https://github.com/libjpeg-turbo/libjpeg-turbo
+[submodule "submodules/zlib"]
+	path = submodules/zlib
+	url = https://github.com/madler/zlib
