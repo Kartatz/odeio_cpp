@@ -28,19 +28,35 @@ target_compile_features(pdftxtremover PRIVATE cxx_std_17)
 set(USE_IMPLICIT_CRYPTO OFF)
 set(ALLOW_CRYPTO_NATIVE ON)
 set(REQUIRE_CRYPTO_NATIVE ON)
+set(USE_INSECURE_RANDOM ON)
+set(SKIP_OS_SECURE_RANDOM ON)
 
+set(HAVE_VERSION_SCRIPT OFF CACHE BOOL "")
+#set(WITH_JPEG7 ON CACHE BOOL "")
+set(WITH_JPEG8 ON CACHE BOOL "")
+set(WITH_SIMD OFF CACHE BOOL "")
 
-add_custom_command(
-	OUTPUT "a"
-	COMMAND ${CMAKE_COMMAND} --build ./ --target zlib
-	COMMENT "-- Building FFmpeg"
-)
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
 
-add_custom_target(ensure_zlib ALL DEPENDS "a")
+set(LIBJPEG_H_PATH "${CMAKE_CURRENT_SOURCE_DIR}/submodules/jpeg-turbo")
+set(LIBJPEG_LIB_PATH "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}turbojpeg${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+set(ZLIB_H_PATH "${CMAKE_CURRENT_SOURCE_DIR}/submodules/zlib")
+set(ZLIB_LIB_PATH "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}z${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 add_subdirectory(submodules/qpdf EXCLUDE_FROM_ALL)
 add_subdirectory(submodules/zlib EXCLUDE_FROM_ALL)
-add_subdirectory(submodules/turbo-jpeg EXCLUDE_FROM_ALL)
+add_subdirectory(submodules/jpeg-turbo EXCLUDE_FROM_ALL)
+
+foreach(target zlib turbojpeg)
+	add_custom_command(
+		OUTPUT ${target}
+		COMMAND ${CMAKE_COMMAND} --build ./ --target ${target}
+	)
+	
+	add_custom_target(ensure_${target} ALL DEPENDS ${target})
+	add_dependencies(libqpdf ensure_${target})
+endforeach()
 
 foreach(property BUILD_RPATH INSTALL_RPATH)
 	set_target_properties(
@@ -51,11 +67,17 @@ foreach(property BUILD_RPATH INSTALL_RPATH)
 endforeach()
 
 foreach(property RUNTIME_OUTPUT_DIRECTORY LIBRARY_OUTPUT_DIRECTORY)
-	foreach(target turbojpeg zlib)
+	foreach(target zlib turbojpeg)
 		set_target_properties(
 			${target}
 			PROPERTIES
-			${property} $<TARGET_FILE_DIR:sparklec>
+			${property} $<TARGET_FILE_DIR:pdftxtremover>
+		)
+		
+		set_target_properties(
+			${target}
+			PROPERTIES
+			NO_SONAME 1
 		)
 	endforeach()
 endforeach()
@@ -63,9 +85,18 @@ endforeach()
 target_link_libraries(
 	pdftxtremover
 	libqpdf
+	turbojpeg
 )
 
 foreach(target pdftxtremover libqpdf)
+	install(
+		TARGETS ${target}
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib NAMELINK_SKIP
+	)
+endforeach()
+
+foreach(target pdftxtremover libqpdf zlib turbojpeg)
 	install(
 		TARGETS ${target}
 		RUNTIME DESTINATION bin
